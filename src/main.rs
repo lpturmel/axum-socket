@@ -1,9 +1,10 @@
 use axum::{extract::ws::Message, Router};
-use axum_socket::{ws_service, EventDispatcher};
+use axum_socket::{ws_service, EventDispatcher, WsEvent};
 
 #[tokio::main]
 async fn main() {
     let event = EventDispatcher::new()
+        .on("ping", pong)
         .on_connect(on_connect)
         .on_disconnect(on_disconnect);
 
@@ -29,4 +30,11 @@ async fn on_connect(socket_id: String, state: EventDispatcher) {
 
 async fn on_disconnect(socket_id: String, _: EventDispatcher) {
     println!("Client {} disconnected", socket_id);
+    // clean up is handled by the library
+}
+
+async fn pong(_: WsEvent<serde_json::Value>, socket_id: String, state: EventDispatcher) {
+    println!("Ponging...");
+    let socket = state.get_socket(&socket_id).expect("socket not found");
+    let _ = socket.unbounded_send(Ok(Message::Text(serde_json::to_string("pong").unwrap())));
 }
