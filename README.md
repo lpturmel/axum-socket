@@ -24,15 +24,6 @@ async fn main() {
 
 async fn on_connect(socket_id: String, state: EventDispatcher) {
     println!("Client {} connected", socket_id);
-    let sockets = state.sockets();
-    let my_socket = state.get_socket(&socket_id).unwrap();
-    let _ = my_socket.unbounded_send(Ok(Message::Text(socket_id.clone())));
-
-    let sockets = sockets.iter().filter(|(id, _)| id != &socket_id);
-    let message = format!("Client {} connected", socket_id);
-    for (_, socket) in sockets {
-        let _ = socket.unbounded_send(Ok(Message::Text(serde_json::to_string(&message).unwrap())));
-    }
 }
 
 async fn on_disconnect(socket_id: String, _: EventDispatcher) {
