@@ -36,5 +36,5 @@ async fn on_disconnect(socket_id: String, _: EventDispatcher) {
 async fn pong(_: WsEvent<serde_json::Value>, socket_id: String, state: EventDispatcher) {
     println!("Ponging...");
     let socket = state.get_socket(&socket_id).expect("socket not found");
-    let _ = socket.unbounded_send(Ok(Message::Text(serde_json::to_string("pong").unwrap())));
+    let _ = socket.unbounded_send(Ok(Message::Text("pong".to_string())));
 }
